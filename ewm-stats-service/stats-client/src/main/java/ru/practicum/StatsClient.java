@@ -8,11 +8,15 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.ClientHttpRequest;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -24,16 +28,16 @@ public class StatsClient {
 
     @Autowired
     public StatsClient(@Value("${stats-server.url}") String serverUrl, RestTemplateBuilder builder) {
+
         rest =
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
-                        .requestFactory(HttpComponentsClientHttpRequestFactory::new)
                         .build();
     }
 
     public void createHit(EndpointHitDto dto) {
         HttpEntity<EndpointHitDto> entity = new HttpEntity<>(dto, headers());
-        rest.exchange("/hit", HttpMethod.POST, entity, Object.class).getStatusCodeValue();
+        rest.exchange("/hit", HttpMethod.POST, entity, Object.class);
     }
 
     public List<ViewStatsDto> findStats(String start, String end, Boolean unique, List<String> uris) {

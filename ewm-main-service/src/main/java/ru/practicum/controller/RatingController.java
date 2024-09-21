@@ -11,8 +11,8 @@ import ru.practicum.dto.SearchEventParams;
 import ru.practicum.dto.UserShortRatingDto;
 import ru.practicum.service.RatingService;
 
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.List;
 

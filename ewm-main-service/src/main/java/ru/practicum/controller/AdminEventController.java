@@ -13,8 +13,8 @@ import ru.practicum.dto.UpdateEventAdminRequest;
 import ru.practicum.model.EventState;
 import ru.practicum.service.EventService;
 
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.List;
 

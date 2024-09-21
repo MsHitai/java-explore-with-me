@@ -1,5 +1,6 @@
 package ru.practicum.service.impl;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +20,6 @@ import ru.practicum.model.*;
 import ru.practicum.repository.*;
 import ru.practicum.service.EventService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -122,12 +122,8 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventFullDto> findEventsForAdmin(List<Long> users, List<EventState> states, List<Integer> categories,
                                                  LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable page) {
-        if (rangeStart == null) {
-            rangeStart = LocalDateTime.now();
-        }
-        if (rangeEnd == null) {
-            rangeEnd = LocalDateTime.now().plusYears(100);
-        }
+        rangeStart = rangeStart != null ? rangeStart : LocalDateTime.now();
+        rangeEnd = rangeEnd != null? rangeEnd : LocalDateTime.now().plusYears(100);
         if (rangeStart.isAfter(rangeEnd)) {
             throw new ValidationException("The start of the event cannot be after the end of the event");
         }
@@ -148,15 +144,9 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventShortDto> findAllEventsForPublic(SearchEventParams params, Pageable page,
                                                       HttpServletRequest request) {
-        LocalDateTime rangeStart = params.getRangeStart();
-        LocalDateTime rangeEnd = params.getRangeEnd();
+        LocalDateTime rangeStart = params.getRangeStart() != null ? params.getRangeStart() : LocalDateTime.now();
+        LocalDateTime rangeEnd = params.getRangeEnd() != null ? params.getRangeEnd() : LocalDateTime.now().plusYears(100);
         String sort = params.getSort();
-        if (rangeStart == null) {
-            rangeStart = LocalDateTime.now();
-        }
-        if (rangeEnd == null) {
-            rangeEnd = LocalDateTime.now().plusYears(100);
-        }
         if (rangeStart.isAfter(rangeEnd)) {
             throw new ValidationException("The start of the event cannot be after the end of the event");
         }
@@ -198,10 +188,10 @@ public class EventServiceImpl implements EventService {
         String start = event.getCreatedOn().format(FORMATTER);
         String end = LocalDateTime.now().format(FORMATTER);
         List<ViewStatsDto> stats = statsClient.findStats(start, end, true, List.of("/events/" + event.getId()));
-        if (stats.size() == 0) {
+        if (stats.isEmpty()) {
             event.setViews(0);
         } else {
-            event.setViews(stats.get(0).getHits());
+            event.setViews(stats.getFirst().getHits());
         }
     }
 
